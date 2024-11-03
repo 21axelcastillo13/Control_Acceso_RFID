@@ -1,0 +1,103 @@
+:root{
+    --button-primary :rgb(0, 130, 202);
+    --button-secundary:#3b82f6;
+    --header:rgb(29, 25, 52);
+}
+
+body { 
+    font-family: Arial,sans-serif; 
+    text-align: center;
+    margin: 0;
+    padding: 0; 
+}
+header{
+    width: 100%;
+    height: 80px;
+    background-color: var(--header);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+span{
+    color: white;
+}
+header nav img{
+    width: 150px;
+}
+h1 { 
+    color: var(--header);
+}
+table { 
+    width: 80%; 
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+tbody tr:nth-child(odd) td {
+    background-color: rgb(244, 244, 244); /* Color más suave para las filas impares */
+}
+
+th {
+     background-color:  #e0e0e0; 
+     color: var(--header);
+}
+button { 
+    padding: 15px 20px; 
+    margin-top: 20px; 
+    background-color:var(--button-primary) ;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: var(--button-secundary);
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Ocultar el modal por defecto */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px; /* Máximo ancho */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-header {
+    display: flex;
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    padding: 20px;
+}
