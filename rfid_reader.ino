@@ -8,10 +8,11 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 byte LecturaUID[4];
 byte Angel[4] = {0x35, 0x82, 0xE4, 0xC5};    
-byte Axel[4] = {0xE3, 0x2F, 0x7D, 0xFA}; 
-byte Arnold[4] = {0x1E, 0x4F, 0xD3, 0x18};  
-byte Francisco[4] = {0xB3, 0x8D, 0x83, 0x0D};  
-byte Fabiana[4] = {0x83, 0x6A, 0x95, 0xEC};  
+byte Axel[4] = {0x1E, 0x4F, 0xD3, 0x18}; 
+byte Francisco[4] = {0x83, 0x6A, 0x95, 0xEC};  
+byte Fabiana[4] = {0xF5, 0xCA, 0x65, 0x76};//// 
+byte Arnold[4] = {0xB3, 0x8D, 0x83, 0x0D};  
+byte Aleman[4] = {0xE3, 0x2F, 0x7D, 0xFA};  
 
 
 
@@ -39,7 +40,10 @@ void loop() {
   // Leer UID
   for (byte i = 0; i < mfrc522.uid.size; i++) {
     LecturaUID[i] = mfrc522.uid.uidByte[i];
+    //Serial.print(LecturaUID[i], HEX); // Imprimir en formato hexadecimal
+    //Serial.print(" ");
   }
+  //Serial.println();
 
   // Identificar el nombre del usuario basado en el UID
   String nombre = "";
@@ -54,6 +58,8 @@ void loop() {
       nombre = "Francisco Villanueva";
   } else if (comparaUID(LecturaUID, Fabiana)) {
       nombre = "Fabiana Guzman";
+  } else if (comparaUID(LecturaUID, Aleman)) {
+      nombre = "Angel Aleman";
   }
 
   if (nombre != "") {
