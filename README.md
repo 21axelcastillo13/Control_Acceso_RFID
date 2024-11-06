@@ -5,6 +5,7 @@ Este proyecto utiliza un módulo RFID MFRC522 para leer identificaciones de tarj
 #Requisitos de Hardware
 - **Arduino Uno** (o compatible)
 - **Módulo RFID MFRC522**
+- **Pantalla LCD 16x2 I2C**
 - **Protoboard** (Opcional)
 - **Cables de conexión**
 - **Tarjetas RFID** (con los UIDs especificados en el código)
@@ -20,6 +21,13 @@ Este proyecto utiliza un módulo RFID MFRC522 para leer identificaciones de tarj
   - RST (pin 9)
   - 3.3V (pin 3.3V)
 
+## Conexiones de la pantalla LCD
+- Conectar la pantalla LCD 16x2 I2C de la siguiente manera:
+ - GND (GND)
+ - VCC (5V)
+ - SDA (pin A4)
+ - SCL (pin A5)
+ 
 ## Requisitos de Software
 
 ### Para el Proyecto de Python (Flask)
