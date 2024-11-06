@@ -29,16 +29,20 @@
     <button onclick="generatePDF()">Generar reporte PDF</button>
 
 
-<!-- Modal Structure -->
+<!-- Modal para el PDF -->
 <div id="pdfModal" class="modal">
     <div class="modal-content">
         <span class="close-button">&times;</span>
-        <div class="modal-header">
-            <i class="fas fa-check-circle" style="color: green; font-size: 48px;"></i>
-            <p id="modalMessage" style="margin-left: 10px; font-size: 18px;"></p>
+        <div id="modalMessage">
+            <span id="checkIcon"></span> <!-- Icono de confirmación -->
+            <p id="messageText"></p>
         </div>
+        <a id="openPDFButton" class="open-pdf-btn" target="_blank">Abrir PDF</a> <!-- Botón para abrir el PDF -->
     </div>
 </div>
+
+
+
 
     <script src="../static/js/app.js"></script>
 </body>

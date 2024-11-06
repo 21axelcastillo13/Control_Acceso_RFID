@@ -97,14 +97,24 @@ def generate_pdf():
         with open(pdf_filename, "wb") as output_pdf:
             pdf_writer.write(output_pdf)
         #print("Datos añadidos al PDF existente.")
-        return jsonify({"message": "Se han guardado los cambios", "filename": pdf_filename})
+        return jsonify({
+            "message": "Se han guardado los cambios", 
+            "filename": pdf_filename,
+            "pdf_url": f'/static/reportes/reporte-{fecha_actual}.pdf'  # Asegúrate de que la URL se construya correctamente
+        })
     else:
         pdf = FPDF()
         
         estruct_pdf(pdf)
         pdf.output(pdf_filename)
         #print("PDF generado exitosamente")
-        return jsonify({"message": "PDF generado exitosamente", "filename": pdf_filename})
+        return jsonify({
+            "message": "PDF generado exitosamente", 
+            "filename": f"reporte-{fecha_actual}.pdf", 
+            "pdf_url": f'/static/reportes/reporte-{fecha_actual}.pdf'  # URL correcta del archivo
+        })
+
+
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5001)  # Cambie 5000 por 5001 ya que estaba utilizado y daba error en com4

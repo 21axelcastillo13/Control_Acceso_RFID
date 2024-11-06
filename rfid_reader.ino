@@ -14,7 +14,7 @@ byte LecturaUID[4];
 byte Angel[4] = {0x35, 0x82, 0xE4, 0xC5};    
 byte Axel[4] = {0x1E, 0x4F, 0xD3, 0x18}; 
 byte Francisco[4] = {0x83, 0x6A, 0x95, 0xEC};  
-byte Fabiana[4] = {0xF5, 0xCA, 0x65, 0x76};
+byte Fabiana[4] = {0xF5, 0xCA, 0x65, 0x79};
 byte Arnold[4] = {0xB3, 0x8D, 0x83, 0x0D};  
 byte Aleman[4] = {0xE3, 0x2F, 0x7D, 0xFA};
 
@@ -25,8 +25,12 @@ int cantidadUsuariosDentro = 0;
 
 const unsigned long TIEMPO_ESPERA = 10000; // 10 segundos de espera
 const unsigned long TIEMPO_LIMPIEZA = 3000; // 3 segundos para limpiar la pantalla
-unsigned long tiempoMostrar; // Tiempo en que se mostró el mensaje
-bool limpiarPantalla = false; // Estado para controlar la limpieza de pantalla
+const unsigned long TIEMPO_INACTIVIDAD = 15000; // 15 segundos de inactividad para apagar pantalla
+
+unsigned long tiempoMostrar;
+unsigned long ultimoUso;
+bool limpiarPantalla = false;
+bool pantallaEncendida = true;
 
 void setup() {
   Serial.begin(9600);
@@ -35,23 +39,45 @@ void setup() {
   lcd.init();
   lcd.backlight();
   lcd.clear();
-  lcd.setCursor(0, 0);
+  
+  mostrarMensajeInicio();
   pinMode(BUZZER_PIN, OUTPUT);
+  ultimoUso = millis(); // Iniciar último uso al inicio
 }
 
 void loop() {
+  // Control de apagado de backlight por inactividad
+  if (pantallaEncendida && millis() - ultimoUso >= TIEMPO_INACTIVIDAD) {
+    lcd.noBacklight(); // Apagar pantalla por inactividad
+    pantallaEncendida = false;
+  }
+
+  // Si no hay actividad y no se ha pasado una tarjeta, muestra "Bienvenido UJCV"
+  if (!limpiarPantalla && !mfrc522.PICC_IsNewCardPresent()) {
+    mostrarMensajeInicio();
+  }
+
   if (limpiarPantalla) {
     if (millis() - tiempoMostrar >= TIEMPO_LIMPIEZA) {
-      lcd.clear(); // Limpiar la pantalla
-      limpiarPantalla = false; // Resetear el estado
+      lcd.clear();
+      limpiarPantalla = false;
+      mostrarMensajeInicio();
     }
   }
 
-  if (!mfrc522.PICC_IsNewCardPresent())   
+  if (!mfrc522.PICC_IsNewCardPresent())
     return;
 
-  if (!mfrc522.PICC_ReadCardSerial()) 
+  if (!mfrc522.PICC_ReadCardSerial())
     return;
+
+  // Encender backlight si estaba apagado
+  if (!pantallaEncendida) {
+    lcd.backlight();
+    pantallaEncendida = true;
+  }
+
+  ultimoUso = millis(); // Actualizar tiempo de última actividad
 
   for (byte i = 0; i < mfrc522.uid.size; i++) {
     LecturaUID[i] = mfrc522.uid.uidByte[i];
@@ -80,18 +106,20 @@ void loop() {
             Serial.print("Salida: ");
             Serial.println(nombre);
             lcd.setCursor(0, 0);
-            lcd.print("Salida: ");
+            lcd.print("Salida:");
             lcd.setCursor(0, 1);
             lcd.print(nombre);
             quitarUsuario(nombre);
+            tiempoMostrar = millis();
+            limpiarPantalla = true;
         } else {
             lcd.setCursor(0, 0);
             lcd.print("No puedes salir");
             lcd.setCursor(0, 1);
-            lcd.print("Por favor,espera");
-            delay(2000); 
-            lcd.clear();
-                }
+            lcd.print("  Favor espera  ");
+            tiempoMostrar = millis();
+            limpiarPantalla = true;
+        }
     } else {
         Serial.print("Entrada: ");
         Serial.println(nombre);
@@ -100,20 +128,29 @@ void loop() {
         lcd.setCursor(0, 1);
         lcd.print(nombre);
         agregarUsuario(nombre);
+        tiempoMostrar = millis();
+        limpiarPantalla = true;
     }
-    tiempoMostrar = millis(); // Iniciar temporizador para limpiar pantalla
-    limpiarPantalla = true; // Activar limpieza de pantalla
   } else {
     sonidoError();
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.print("Acceso denegado");
+    lcd.print("     Acceso     ");
+    lcd.setCursor(1, 1);
+    lcd.print("   Denegado    ");
     Serial.println("Acceso denegado: usuario no registrado en el sistema");
-    tiempoMostrar = millis(); // Iniciar temporizador para limpiar pantalla
-    limpiarPantalla = true; // Activar limpieza de pantalla
+    tiempoMostrar = millis();
+    limpiarPantalla = true;
   }
 
   mfrc522.PICC_HaltA();  
+}
+
+void mostrarMensajeInicio() {
+  lcd.setCursor(0, 0);
+  lcd.print(" Control Acceso ");
+  lcd.setCursor(0, 1);
+  lcd.print("      UJCV      ");
 }
 
 boolean comparaUID(byte lectura[], byte usuario[]) {
@@ -166,11 +203,11 @@ void quitarUsuario(String nombre) {
 }
 
 void sonidoConfirmacion() {
-  tone(BUZZER_PIN, 900, 200); 
+  tone(BUZZER_PIN, 1500, 200); 
   delay(200); 
 }
 
 void sonidoError() {
-  tone(BUZZER_PIN, 500, 500); 
+  tone(BUZZER_PIN, 100, 500); 
   delay(500);  
 }
